@@ -6,6 +6,8 @@ def get_project_root() -> Path:
     """Return the project root directory."""
     return Path(__file__).resolve().parents[2]
 
+def get_path(path: str) -> Path:
+    return get_project_root() / path
 
 def load_config() -> dict:
     """Load the project configuration from config.yaml."""

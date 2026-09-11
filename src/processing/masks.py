@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
+from skimage.measure import label
 
 
 def polygon_to_mask(
@@ -123,3 +124,45 @@ def build_masks(
         )
 
     return masks_by_filename
+
+
+def get_connected_components(
+    binary_mask: np.ndarray,
+    connectivity: int = 2,
+) -> tuple[np.ndarray, int]:
+    labels, num_components = label(
+        binary_mask,
+        connectivity=connectivity,
+        return_num=True,
+    )
+
+    return labels, num_components
+
+
+def calculate_iou(
+    mask_a: np.ndarray,
+    mask_b: np.ndarray,
+) -> float:
+    intersection = np.logical_and(mask_a, mask_b).sum()
+    union = np.logical_or(mask_a, mask_b).sum()
+
+    if union == 0:
+        return 0.0
+
+    return intersection / union
+
+
+def filter_components_by_area(
+    labeled_mask: np.ndarray,
+    min_area: int = 664,
+) -> np.ndarray:
+    """Remove connected components smaller than a minimum area."""
+    filtered_mask = np.zeros_like(labeled_mask)
+
+    for component_id in range(1, labeled_mask.max() + 1):
+        component = labeled_mask == component_id
+
+        if component.sum() >= min_area:
+            filtered_mask[component] = component_id
+
+    return filtered_mask

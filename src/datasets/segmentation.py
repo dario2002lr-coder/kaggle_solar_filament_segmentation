@@ -64,3 +64,35 @@ class SegmentationDataset(Dataset):
         mask = torch.from_numpy(mask).unsqueeze(0)
 
         return image, mask
+
+
+class InferenceDataset(Dataset):
+    def __init__(
+        self,
+        images_dir: Path,
+    ):
+        self.images_dir = Path(images_dir)
+        self.filenames = sorted(
+            path.name
+            for path in self.images_dir.glob("*.jpeg")
+        )
+
+    def __len__(self):
+        return len(self.filenames)
+
+    def __getitem__(self, index):
+        filename = self.filenames[index]
+        image_path = self.images_dir / filename
+
+        image = np.array(
+            Image.open(image_path),
+            dtype=np.float32,
+        )
+
+        image /= 255.0
+
+        image = torch.from_numpy(
+            image
+        ).unsqueeze(0)
+
+        return image, filename

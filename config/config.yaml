@@ -1,3 +1,4 @@
 paths:
   raw_data_dir: data/raw/MAGFiLO_1.0_Kaggle_2026
   models_dir: data/models
+  submissions_dir: data/submissions

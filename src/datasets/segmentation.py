@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from PIL import Image
 from torch.utils.data import Dataset
+from torchvision import tv_tensors
 
 
 class SegmentationDataset(Dataset):
@@ -18,23 +19,28 @@ class SegmentationDataset(Dataset):
 
     images_dir:
         Directory containing the corresponding images.
+
+    transform:
+        Optional transformation applied jointly to the image
+        and segmentation mask.
     """
 
     def __init__(
         self,
         masks: dict[str, list[np.ndarray]],
         images_dir: Path,
+        transform=None,
     ):
         self.masks = masks
         self.images_dir = Path(images_dir)
         self.filenames = list(masks.keys())
+        self.transform = transform
 
     def __len__(self) -> int:
         return len(self.filenames)
 
     def __getitem__(self, index: int):
         filename = self.filenames[index]
-
         image_path = self.images_dir / filename
 
         image = np.array(
@@ -62,6 +68,11 @@ class SegmentationDataset(Dataset):
         # H x W -> 1 x H x W
         image = torch.from_numpy(image).unsqueeze(0)
         mask = torch.from_numpy(mask).unsqueeze(0)
+
+        # Apply the same transformation to image and mask
+        if self.transform is not None:
+            mask = tv_tensors.Mask(mask)
+            image, mask = self.transform(image, mask)
 
         return image, mask
 

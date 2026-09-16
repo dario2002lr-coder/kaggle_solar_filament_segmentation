@@ -17,7 +17,7 @@ For that reason, the solution depends not only on the model architecture, but al
 
 ## What has been done so far
 
-The project already has a functional foundation for preparing data and training a segmentation model:
+The project already has a solid data pipeline and a working segmentation workflow, and it has been further improved with recent experiments focused on model optimization and generalization:
 
 - loading and cleaning of dataset annotations,
 - conversion of polygon annotations into binary masks,
@@ -25,65 +25,85 @@ The project already has a functional foundation for preparing data and training 
 - construction of masks per image file,
 - division of the dataset into train/validation/test splits,
 - definition of a PyTorch dataset for images and masks,
-- use of a small U-Net as a segmentation baseline,
-- training with loss functions and evaluation metrics,
-- support for DataLoaders, checkpointing, and metric monitoring.
+- use of a U-Net architecture as the main segmentation baseline,
+- training with segmentation losses and evaluation metrics,
+- support for DataLoaders, checkpointing, and metric monitoring,
+- hyperparameter optimization via random search,
+- use of data augmentation to improve robustness and reduce overfitting,
+- validation against Kaggle submission metrics.
 
 ### Main project structure
 
 - `src/datasets/segmentation.py`: dataset for images and masks.
 - `src/processing/masks.py`: generation of masks from polygon annotations.
 - `src/splitting/split.py`: dataset partitioning.
-- `src/models/unet.py`: base U-Net architecture.
+- `src/models/unet.py`: U-Net architecture used for segmentation.
 - `src/training/losses.py`: loss functions such as Dice and BCE + Dice.
 - `src/training/metrics.py`: evaluation metrics such as Dice and IoU.
 - `src/training/trainer.py`: training and validation loop.
 - `src/utils/data.py`: utilities for loading annotations and handling data.
 - `config/config.yaml`: general project configuration.
 
+## Recent improvements
+
+The latest experiments focused on the two main factors that had the greatest impact on performance:
+
+- random search over the most relevant hyperparameters of the network,
+- addition of data augmentation during training to improve generalization.
+
+This led to a clear improvement in the Kaggle submission score:
+
+- previous submission score: 0.25
+- improved submission score: 0.29
+
+This represents a meaningful gain and indicates that the model is moving in the right direction, especially when the optimization is tied to more robust training data transformations.
+
 ## Current status of the project
 
-The repository is in an early stage, with a very useful base for experimentation, but it cannot yet be considered an optimized final solution.
+The repository is no longer just a baseline prototype. It has moved to a more mature experimental stage, with a functional pipeline and a clear path toward performance improvements.
 
-At the moment, the core infrastructure has been set up:
+At the moment, the project already includes:
 
-- data preparation,
+- robust data preparation,
 - a PyTorch segmentation pipeline,
-- a simple baseline U-Net model,
-- appropriate loss and metrics for binary segmentation.
+- a trained U-Net baseline,
+- standard loss functions and evaluation metrics,
+- hyperparameter optimization through random search,
+- data augmentation strategies,
+- validated performance gains in Kaggle submissions.
 
-This means there is already a solid foundation for training and evaluating prototypes, but there is still a lot of work ahead to improve performance, stability, and robustness.
+This means the project already has a strong foundation for iterative improvement and is now in a phase where model tuning and training strategy have a measurable impact on results.
 
 ## What still needs to be improved
 
-This project is far from being complete or fully optimized. Several important areas still need to be tested and refined:
+Although the recent results are promising, there is still room to continue improving the solution:
 
-- image preprocessing optimization,
-- testing different normalization strategies and data augmentation,
-- exploration of alternative segmentation architectures,
-- fine-tuning of hyperparameters,
+- further hyperparameter tuning,
+- testing alternative normalization strategies,
+- more aggressive and task-specific augmentation,
+- exploration of deeper or more advanced segmentation architectures,
 - improving the balance between precision and recall,
-- postprocessing masks to remove noise or small isolated components,
-- comparison of different loss functions,
-- more rigorous validation with challenge-relevant metrics.
+- postprocessing of masks to remove noise or isolated components,
+- comparing additional loss functions,
+- stronger validation with challenge-relevant metrics.
 
-## Strategies that likely need to be tested
+## Strategies that likely need to be tested next
 
-Although the U-Net is a good baseline, other strategies still need to be explored to determine which works best for this type of solar imagery:
+The current U-Net is already proving useful, but there are still several directions worth exploring to push performance further:
 
-- deeper U-Nets or improved variants,
+- deeper U-Net variants or improved encoder-decoder designs,
 - UNet++ or models with stronger skip connections,
-- DeepLabV3+ to capture broader context,
+- DeepLabV3+ for broader contextual understanding,
 - FPN and other semantic segmentation architectures,
-- models with pretrained backbones,
-- domain-specific data augmentation for astronomical images,
+- pretrained backbones for better feature extraction,
+- domain-specific augmentation tailored to solar imagery,
 - thresholding and morphological refinement of final masks,
-- ensembles of multiple models to stabilize predictions.
+- ensemble strategies to improve stability.
 
 ## Conclusion
 
-This project starts from a reasonable foundation: data cleaning, mask generation, training of a segmentation model, and evaluation with standard metrics. However, there is still a lot to optimize and test before it can be considered a competitive solution.
+This project has evolved from a basic segmentation pipeline into a more structured and optimized workflow. The main breakthrough in the latest stage was the combination of random search for hyperparameter tuning and data augmentation, which improved the Kaggle submission score from 0.25 to 0.29.
 
-The current goal is to use this structure as a starting point for rapid iteration, comparing models, adjusting hyperparameters, and exploring more advanced strategies that improve the accuracy of solar filament segmentation.
+The current goal is to continue refining the training setup, explore more advanced architectures, and strengthen the final segmentation quality through careful validation and targeted optimization.
 
-> In short: the base pipeline is in place, but the most important part is still to come: optimization, deeper validation, and testing of alternative architectures and training strategies.
+> In short: the pipeline is now functioning at a stronger level, and the latest results show that systematic tuning and augmentation are producing measurable improvements in performance.

@@ -89,6 +89,7 @@ def compare_instances(
                 "pred_id": pred_id,
                 "gt_id": best_gt_id,
                 "iou": best_iou,
+                "area": pred_mask.sum(),
                 "match_type": match_type,
             }
         )
@@ -107,6 +108,7 @@ def compare_instances(
                     "pred_id": None,
                     "gt_id": gt_id,
                     "iou": 0.0,
+                    "area": None,
                     "match_type": "FN",
                 }
             )
